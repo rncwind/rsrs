@@ -1,0 +1,7 @@
+* RuSt Reverse Shell
+** What is this?
+A reverse shell generator written in rust.
+** Why?
+I enjoy playing CTFs. There are reverse shell generators available on the web,
+but i wanted a single binary program that I could throw into containers and VMs
+easily, or just netcat across the wire to a target box.
