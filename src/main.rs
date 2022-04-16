@@ -19,7 +19,7 @@ struct Args {
     #[clap(long, default_value_t=String::from("/bin/sh"))]
     shell: String,
     /// Encoding to output the shell with
-    #[clap(arg_enum, default_value_t=Encoding::None)]
+    #[clap(arg_enum, default_value_t=Encoding::None, long, short)]
     encoding: Encoding,
 
     /// List all reverse shell names in the database.
@@ -73,7 +73,24 @@ fn substitute_components(args: Args, rs: RevShell) -> String {
     if rs.sub_components.contains(&"PORT".to_string()) {
         modified = modified.replace("{SUBPORT}", &args.port.expect("Requires a valid port!").to_string());
     }
-    modified
+    encode(args.encoding, modified)
+}
+
+fn encode(encoding: Encoding, completers: String) -> String {
+    match encoding {
+        Encoding::None => {
+            return completers;
+        },
+        Encoding::UrlEncode => {
+            return urlencoding::encode(&completers).to_string();
+        },
+        Encoding::DoubleUrlEncode => {
+            return urlencoding::encode(&urlencoding::encode(&completers).to_string()).to_string();
+        },
+        Encoding::Base64Encode => {
+            return base64::encode(completers);
+        }
+    }
 }
 
 fn list_shells() {
