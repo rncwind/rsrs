@@ -28,13 +28,21 @@ struct Args {
     /// List all reverse shells AND their commands (WARNING, long)
     #[clap(long)]
     list_shells_verbose: bool,
+    /// Filter shells to a specific OS
+    #[clap(long, requires="list-shells")]
+    list_os: Option<String>
 }
 
 fn main() {
     let args = Args::parse();
     // If user wants to list the shell names, then do that
     if args.list_shells {
-        list_shells()
+        //list_shells()
+        if args.list_os.is_some() {
+            list_shells_for_os(args);
+        } else {
+            list_shells();
+        }
     }
     // If they want to preview the commands
     else if args.list_shells_verbose {
@@ -78,6 +86,9 @@ fn substitute_components(args: Args, rs: RevShell) -> String {
     if rs.sub_components.contains(&"PORT".to_string()) {
         modified = modified.replace("{SUBPORT}", &args.port.expect("Requires a valid port!").to_string());
     }
+    if rs.sub_components.contains(&"SHELL".to_string()) {
+        modified = modified.replace("{SUBSHELL}", &args.shell);
+    }
     encode(args.encoding, modified)
 }
 
@@ -111,5 +122,13 @@ fn list_shells() {
 fn list_shells_verbose() {
     for(_, shell) in &*SHELLS {
         println!("{}\n", shell);
+    }
+}
+
+fn list_shells_for_os(args: Args) {
+    for(shell, shellinfo) in &*SHELLS {
+        if shellinfo.os_support.contains(&args.list_os.as_ref().unwrap()) {
+            println!("{}", shell);
+        }
     }
 }
