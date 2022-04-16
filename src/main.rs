@@ -55,6 +55,9 @@ fn main() {
     }
 }
 
+/// Ensures that the required command line arguments were passed to fufill
+/// the set of substitutions we need, in order to generate a valid reverse
+/// shell.
 fn validate_components(args: &Args, rs: &RevShell) -> Result<(), String> {
     if args.ip.is_none() & rs.sub_components.contains(&"IP".to_string()) {
         return Err("IP Flag is Required".to_string());
@@ -65,6 +68,8 @@ fn validate_components(args: &Args, rs: &RevShell) -> Result<(), String> {
     Ok(())
 }
 
+/// Substitute the components of the reverse shell that we need to specialise
+/// in order to be of use to any would-be red-teamer.
 fn substitute_components(args: Args, rs: RevShell) -> String {
     let mut modified = rs.command.clone();
     if rs.sub_components.contains(&"IP".to_string()) {
@@ -76,6 +81,8 @@ fn substitute_components(args: Args, rs: RevShell) -> String {
     encode(args.encoding, modified)
 }
 
+/// Given a fully substituted string, apply one of the encoding steps that we
+/// support.
 fn encode(encoding: Encoding, completers: String) -> String {
     match encoding {
         Encoding::None => {
@@ -93,12 +100,14 @@ fn encode(encoding: Encoding, completers: String) -> String {
     }
 }
 
+/// Get a listing of all shells that were defined at compile-time.
 fn list_shells() {
     for (shell, _) in &*SHELLS {
         println!("{}", shell);
     }
 }
 
+/// List all shells, their componeents, their raw string, and what OS they support.
 fn list_shells_verbose() {
     for(_, shell) in &*SHELLS {
         println!("{}\n", shell);

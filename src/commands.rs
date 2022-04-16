@@ -4,6 +4,9 @@ use lazy_static::lazy_static;
 use std::fmt;
 
 lazy_static! {
+    /// This builds the set of possible reverse shells from revshells.json
+    /// at compile time. When the program starts up, this hashtable of shells
+    /// is built at first access.
     pub static ref SHELLS: HashMap<String, RevShell> = {
         let mut m = HashMap::new();
         let raw_json = std::include_str!("../revshells.json");
@@ -34,6 +37,7 @@ impl fmt::Display for RevShell {
     }
 }
 
+/// Enumerate encoding options. Default is None
 #[derive(Debug, clap::ArgEnum, Clone)]
 pub enum Encoding {
     None, UrlEncode, DoubleUrlEncode, Base64Encode,
