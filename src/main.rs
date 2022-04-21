@@ -125,7 +125,11 @@ fn encode(encoding: Encoding, completers: String) -> String {
 fn list_shells_verbose(filter: Option<String>) {
     match filter {
         Some(filter) => {
-            todo!();
+            for(_,shell) in &*SHELLS {
+                if shell.os_support.contains(&filter) {
+                    println!("{}", shell);
+                }
+            }
         },
         None => {
             for(_, shell) in &*SHELLS {
