@@ -40,5 +40,5 @@ impl fmt::Display for RevShell {
 /// Enumerate encoding options. Default is None
 #[derive(Debug, clap::ArgEnum, Clone)]
 pub enum Encoding {
-    None, UrlEncode, DoubleUrlEncode, Base64Encode,
+    None, Url, DoubleUrl, Base64,
 }

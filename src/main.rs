@@ -109,13 +109,13 @@ fn encode(encoding: Encoding, completers: String) -> String {
         Encoding::None => {
             return completers;
         },
-        Encoding::UrlEncode => {
+        Encoding::Url => {
             return urlencoding::encode(&completers).to_string();
         },
-        Encoding::DoubleUrlEncode => {
+        Encoding::DoubleUrl => {
             return urlencoding::encode(&urlencoding::encode(&completers).to_string()).to_string();
         },
-        Encoding::Base64Encode => {
+        Encoding::Base64 => {
             return base64::encode(completers);
         }
     }
